@@ -11,5 +11,9 @@
         "ecmaVersion": "latest"
     },
     "rules": {
+        "semi": "error",
+        "indent": ["error", 4],
+        "no-unused-vars": "warn",
+        "linebreak-style": ["error", "unix"]
     }
 }
