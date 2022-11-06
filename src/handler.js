@@ -96,7 +96,7 @@ const getAllBooks = (req, h) => {
     });
 };
 
-function getBook(req, h) {
+const getBook = (req, h) => {
     const { bookId } = req.params;
 
     const foundBook = books.find((book) => book.id === bookId);
@@ -114,10 +114,63 @@ function getBook(req, h) {
             book: foundBook,
         },
     }).code(200);
-}
+};
+
+const updateBook = (req, h) => {
+    const { bookId } = req.params;
+    const {
+        name, year, author, summary, publisher, pageCount, readPage, reading,
+    } = req.payload;
+    const currentDate = new Date().toISOString();
+
+    const index = books.findIndex((book) => book.id === bookId);
+    if (index === -1) {
+        return h.response({
+            status: 'fail',
+            message: 'Gagal memperbarui buku. Id tidak ditemukan',
+        }).code(404);
+    }
+
+    try {
+        if (!name || readPage > pageCount) {
+            const message = `Gagal memperbarui buku.${
+                (!name) ? ' Mohon isi nama buku' : ' readPage tidak boleh lebih besar dari pageCount'}`;
+
+            return h.response({
+                status: 'fail',
+                message,
+            }).code(400);
+        }
+        books[index] = {
+            ...books[index],
+            name,
+            year,
+            author,
+            summary,
+            publisher,
+            pageCount,
+            readPage,
+            reading,
+            updatedAt: currentDate,
+            finished: readPage === pageCount,
+        };
+
+        return h.response({
+            status: 'success',
+            message: 'Buku berhasil diperbarui',
+        }).code(200);
+    } catch (err) {
+        console.log(err);
+        return h.response({
+            status: 'error',
+            message: 'Buku gagal diperbarui',
+        }).code(500);
+    }
+};
 
 module.exports = {
     addBookHandler,
     getAllBooks,
     getBook,
+    updateBook,
 };
