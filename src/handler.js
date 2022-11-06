@@ -49,6 +49,54 @@ const addBookHandler = (req, h) => {
     }
 };
 
+const getAllBooks = (req, h) => {
+    const { name = null } = req.query;
+    let { reading = null, finished = null } = req.query;
+
+    function mappingBooks(tempBooks) {
+        return tempBooks.map((book) => ({
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher,
+        }));
+    }
+
+    let viewBooks = mappingBooks(books);
+
+    try {
+        if (name !== null) {
+            viewBooks = mappingBooks(
+                books.filter((book) => book.name.toLowerCase().includes(name.toLowerCase())),
+            );
+        } else if (reading !== null) {
+            reading = parseInt(reading, 36);
+            if (reading === 1) {
+                viewBooks = mappingBooks(books.filter((book) => !!book.reading));
+            } else if (reading === 0) {
+                viewBooks = mappingBooks(books.filter((book) => !book.reading));
+            }
+        } else if (finished !== null) {
+            finished = parseInt(finished, 36);
+
+            if (finished === 1) {
+                viewBooks = mappingBooks(books.filter((book) => !!book.finished));
+            } else if (finished === 0) {
+                viewBooks = mappingBooks(books.filter((book) => !book.finished));
+            }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+
+    return h.response({
+        status: 'success',
+        data: {
+            books: viewBooks,
+        },
+    });
+};
+
 module.exports = {
     addBookHandler,
+    getAllBooks,
 };
