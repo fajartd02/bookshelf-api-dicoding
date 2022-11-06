@@ -14,6 +14,7 @@
         "semi": "error",
         "indent": ["error", 4],
         "no-unused-vars": "warn",
-        "linebreak-style": ["error", "unix"]
+        "linebreak-style": ["error", "unix"],
+        "no-console": "off"
     }
 }
